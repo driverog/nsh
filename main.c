@@ -178,7 +178,7 @@ int nsh_pipe_launch(char** args){
 	for (int i = 0; args[i] != NULL; ++i) {
 		if (ctrc_no_moreline == 1)
 			return 1;
-		if (strcmp(args[i],"if") == 0){
+		if (i == j && strcmp(args[i],"if") == 0){
 			j = i;
 			int c_if = 0;
 			for (int k = i+1; args[k] != NULL ; ++k) {
@@ -317,7 +317,9 @@ int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2
 			} else if (strcmp(args[i],"if") == 0){
 				new_args[j] = args[i];
 				j++;
-				if_cont++;
+				if (j == 0 || if_cont > 0) {
+					if_cont++;
+				}
 			} else if (strcmp(args[i], "<") == 0) {
 				redirectIn(args[i + 1]);
 				i++;
@@ -490,8 +492,10 @@ int nsh_execute(char **args, int should_wait){
 		int k = 0;
 		int if_count = 0;
 		for (int j = 0; args[j] != NULL; ++j) {
-			if (strcmp(args[j], "if") == 0 && (j == 0 || if_count > 0)) if_count ++;
-			if (strcmp(args[j], "end") == 0 && if_count > 0) if_count --;
+			if (strcmp(args[j], "if") == 0 && (j == 0 || (if_count > 0 && nsh_if_keyword(args[j-1]))))
+				if_count ++;
+			if (strcmp(args[j], "end") == 0 && if_count > 0)
+				if_count --;
 			if (if_count == 0){
 				if (strcmp(args[j],";") == 0)
 				{

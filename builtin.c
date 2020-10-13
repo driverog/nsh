@@ -129,13 +129,17 @@ int nsh_false(char** args){
 	return EXIT_FAILURE;
 }
 
+int nsh_if_keyword(char* word) {
+	return strcmp(word, "if") == 0 || strcmp(word, "then") == 0 || strcmp(word, "else") == 0;
+}
+
 int nsh_if(char** args){
 	args[0] = 0;
 	int then = 0;
 	int els = 0;
 	int if_cont = 0;
 	for (int j = 1; args[j] != NULL; ++j) {
-		if (strcmp(args[j],"if") == 0){
+		if (strcmp(args[j],"if") == 0 && nsh_if_keyword(args[j-1])){
 			if_cont++;
 		}
 		else if (strcmp(args[j],"then") == 0 && if_cont == 0){
