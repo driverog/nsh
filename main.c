@@ -490,8 +490,8 @@ int nsh_execute(char **args, int should_wait){
 		int k = 0;
 		int if_count = 0;
 		for (int j = 0; args[j] != NULL; ++j) {
-			if (strcmp(args[j], "if") == 0) if_count ++;
-			if (strcmp(args[j], "end") == 0) if_count --;
+			if (strcmp(args[j], "if") == 0 && (j == 0 || if_count > 0)) if_count ++;
+			if (strcmp(args[j], "end") == 0 && if_count > 0) if_count --;
 			if (if_count == 0){
 				if (strcmp(args[j],";") == 0)
 				{
