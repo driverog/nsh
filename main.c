@@ -339,7 +339,7 @@ int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2
 		new_args[j] = NULL;
 		
 		for (int i = 0; i < nsh_num_builtin_out(); ++i) {
-			if (strcmp(args[0], builtin_str_out[i]) == 0){
+			if (strcmp(new_args[0], builtin_str_out[i]) == 0){
 				exit((*builtin_func_out[i])(new_args));
 			}
 		}
@@ -492,7 +492,8 @@ int nsh_execute(char **args, int should_wait){
 		int k = 0;
 		int if_count = 0;
 		for (int j = 0; args[j] != NULL; ++j) {
-			if (strcmp(args[j], "if") == 0 && (j == 0 || (if_count > 0 && nsh_if_keyword(args[j-1]))))
+			if (strcmp(args[j], "if") == 0 && (j == k || (if_count > 0 && nsh_if_keyword(args[j-1]))
+			|| (j - k > 1 && nsh_if_keyword_2(args[j-2]))))
 				if_count ++;
 			if (strcmp(args[j], "end") == 0 && if_count > 0)
 				if_count --;

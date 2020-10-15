@@ -130,11 +130,16 @@ int nsh_false(char** args){
 }
 
 int nsh_if_keyword(char* word) {
-	return strcmp(word, "if") == 0 || strcmp(word, "then") == 0 || strcmp(word, "else") == 0;
+	return strcmp(word, "if") == 0 || strcmp(word, "then") == 0 || strcmp(word, "else") == 0
+	|| strcmp(word, "|") == 0 || strcmp(word, "&&") == 0 || strcmp(word, "||") == 0;
+}
+
+int nsh_if_keyword_2(char* word) {
+	return strcmp(word, ">") == 0 || strcmp(word, ">>") == 0 || strcmp(word, "<") == 0;
 }
 
 int nsh_if(char** args){
-	args[0] = 0;
+//	args[0] = 0;
 	int then = 0;
 	int els = 0;
 	int if_cont = 0;
@@ -156,8 +161,12 @@ int nsh_if(char** args){
 		}
 	}
 	if (nsh_execute(args + 1, 1) == 0){
+		if (then == 0)
+			return 0;
 		return nsh_execute(args + then, 1);
 	} else {
+		if (els == 0)
+			return 0;
 		return nsh_execute(args + els, 1);
 	}
 }
