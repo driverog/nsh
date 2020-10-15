@@ -178,7 +178,7 @@ int nsh_pipe_launch(char** args){
 	for (int i = 0; args[i] != NULL; ++i) {
 		if (ctrc_no_moreline == 1)
 			return 1;
-		if (i == j && strcmp(args[i],"if") == 0){
+		if ((i == j || (i - j > 1 && nsh_if_keyword_2(args[i-2]))) && strcmp(args[i],"if") == 0){
 			j = i;
 			int c_if = 0;
 			for (int k = i+1; args[k] != NULL ; ++k) {
@@ -487,6 +487,8 @@ char* strjoin(char** args, char c){
 
 int nsh_execute(char **args, int should_wait){
 	int i;
+	
+//	nsh_print_args(args);
 	
 	if (should_wait){
 		int k = 0;

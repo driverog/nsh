@@ -138,6 +138,13 @@ int nsh_if_keyword_2(char* word) {
 	return strcmp(word, ">") == 0 || strcmp(word, ">>") == 0 || strcmp(word, "<") == 0;
 }
 
+void nsh_print_args(char** args) {
+	for (int i = 0; args[i] != NULL; ++i) {
+		printf("%s ", args[i]);
+	}
+	printf("\n");
+}
+
 int nsh_if(char** args){
 //	args[0] = 0;
 	int then = 0;

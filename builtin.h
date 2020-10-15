@@ -43,6 +43,7 @@ int nsh_get(char** args);
 int nsh_unset(char** args);
 int nsh_if_keyword(char* word);
 int nsh_if_keyword_2(char* word);
+void nsh_print_args(char** args);
 
 int nsh_launch(char** args, int fd_in, int fd_out, int to_close_1, int to_close_2);
 int nsh_pipe_launch(char** args);
