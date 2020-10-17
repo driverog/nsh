@@ -6,7 +6,6 @@
 #include "builtin.h"
 
 
-
 char* builtin_str[5] = {
 "cd",
 "exit",
@@ -61,7 +60,7 @@ int nsh_cd(char** args){
 
 int nsh_jobs(char** args){
 	for (int i = 0; i < bg_pid_list->len; ++i) {
-		printf("[%d]\t%s",i+1,getValueAtIndexG(bg_pname_list,i));
+		printf("[%d]\t%s",i+1,(char*)getValueAtIndexG(bg_pname_list,i));
 	}
 	return 0;
 }
@@ -116,7 +115,7 @@ void nsh_set_history_path(){
 
 int nsh_print_history(char** args){
 	for (int i = 0; i < history_list->len; ++i) {
-		printf("%d:\t%s",i+1,getValueAtIndexG(history_list,i));
+		printf("%d:\t%s",i+1,(char*)getValueAtIndexG(history_list,i));
 	}
 	return 0;
 }
@@ -130,11 +129,17 @@ int nsh_false(char** args){
 }
 
 int nsh_if_keyword(char* word) {
+	if (word == NULL) {
+		return 1;
+	}
 	return strcmp(word, "if") == 0 || strcmp(word, "then") == 0 || strcmp(word, "else") == 0
-	|| strcmp(word, "|") == 0 || strcmp(word, "&&") == 0 || strcmp(word, "||") == 0;
+	|| strcmp(word, "|") == 0 || strcmp(word, "&&") == 0 || strcmp(word, "||") == 0 || strcmp(word, ";") == 0;
 }
 
 int nsh_if_keyword_2(char* word) {
+	if (word == NULL) {
+		return 0;
+	}
 	return strcmp(word, ">") == 0 || strcmp(word, ">>") == 0 || strcmp(word, "<") == 0;
 }
 
@@ -150,8 +155,9 @@ int nsh_if(char** args){
 	int then = 0;
 	int els = 0;
 	int if_cont = 0;
+//	nsh_print_args(args);
 	for (int j = 1; args[j] != NULL; ++j) {
-		if (strcmp(args[j],"if") == 0 && nsh_if_keyword(args[j-1])){
+		if (strcmp(args[j],"if") == 0 && (nsh_if_keyword(args[j-1]) || (j > 1 && nsh_if_keyword_2(args[j-2])))){
 			if_cont++;
 		}
 		else if (strcmp(args[j],"then") == 0 && if_cont == 0){
@@ -167,6 +173,7 @@ int nsh_if(char** args){
 			else if_cont--;
 		}
 	}
+//	nsh_print_args(args);
 	if (nsh_execute(args + 1, 1) == 0){
 		if (then == 0)
 			return 0;
@@ -238,7 +245,7 @@ int nsh_help(char** args){
 int nsh_set(char** args){
 	if (args[1] == NULL){
 		for (int i = 0; i < dict_keys->len; ++i) {
-			printf("%s=%s\n",dict_keys->array[i],dict_content->array[i]);
+			printf("%s=%s\n",(char*)dict_keys->array[i],(char*)dict_content->array[i]);
 		}
 	} else {
 		int index = -1;
@@ -246,6 +253,7 @@ int nsh_set(char** args){
 			if (strcmp(args[1],dict_keys->array[i]) == 0) index = i; break;
 		}
 		char* str = malloc(1);
+		str[0] = 0;
 		if (args[2] == NULL)
 			str[0] = 0;
 		else if (args[2][0] == '`') {
@@ -337,7 +345,7 @@ int nsh_get(char** args){
 	int found = 0;
 	for (int i = 0; i < dict_keys->len; ++i) {
 		if (strcmp(args[1],dict_keys->array[i]) == 0){
-			printf("%s\n",dict_content->array[i]);
+			printf("%s\n",(char*)dict_content->array[i]);
 			found = 1;
 			break;
 		}

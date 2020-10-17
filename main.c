@@ -179,10 +179,11 @@ int nsh_pipe_launch(char** args){
 		if (ctrc_no_moreline == 1)
 			return 1;
 		if ((i == j || (i - j > 1 && nsh_if_keyword_2(args[i-2]))) && strcmp(args[i],"if") == 0){
-			j = i;
+//			j = i;
 			int c_if = 0;
 			for (int k = i+1; args[k] != NULL ; ++k) {
-				if (strcmp(args[k],"if") == 0) c_if++;
+				if (strcmp(args[k],"if") == 0 && (nsh_if_keyword(args[k-1]) || (k > 1 && nsh_if_keyword_2(args[k-2]))))
+					c_if++;
 				if (strcmp(args[k],"end") == 0){
 					if (c_if == 0) {
 						i = k;
@@ -316,10 +317,10 @@ int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2
 				j++;
 			} else if (strcmp(args[i],"if") == 0){
 				new_args[j] = args[i];
-				j++;
-				if (j == 0 || if_cont > 0) {
+				if (j == 0 || nsh_if_keyword(args[i-1]) || (i > 1 && nsh_if_keyword_2(args[i-2]))) {
 					if_cont++;
 				}
+				j++;
 			} else if (strcmp(args[i], "<") == 0) {
 				redirectIn(args[i + 1]);
 				i++;
@@ -337,6 +338,8 @@ int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2
 		
 		
 		new_args[j] = NULL;
+		
+//		nsh_print_args(args);
 		
 		for (int i = 0; i < nsh_num_builtin_out(); ++i) {
 			if (strcmp(new_args[0], builtin_str_out[i]) == 0){
@@ -375,6 +378,7 @@ int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2
 		}
 	}
 	
+//	printf("%d\n", WEXITSTATUS(status));
 	return WEXITSTATUS(status);
 }
 
@@ -473,7 +477,7 @@ char* strjoin(char** args, char c){
 	char* string = malloc(len * sizeof(char) + i * sizeof(char));
 	int k = 0;
 	for(i = 0; args[i] != NULL; ++i) {
-		for (int j = 0; args[i][j] != NULL; j++){
+		for (int j = 0; args[i][j] != 0; j++){
 			string[k] = args[i][j];
 			k++;
 		}
@@ -494,7 +498,7 @@ int nsh_execute(char **args, int should_wait){
 		int k = 0;
 		int if_count = 0;
 		for (int j = 0; args[j] != NULL; ++j) {
-			if (strcmp(args[j], "if") == 0 && (j == k || (if_count > 0 && nsh_if_keyword(args[j-1]))
+			if (strcmp(args[j], "if") == 0 && (j == k || (j - k > 0 && nsh_if_keyword(args[j-1]))
 			|| (j - k > 1 && nsh_if_keyword_2(args[j-2]))))
 				if_count ++;
 			if (strcmp(args[j], "end") == 0 && if_count > 0)
@@ -528,7 +532,7 @@ int nsh_execute(char **args, int should_wait){
 			}
 		}
 		if (if_count != 0) {
-			printf("Error parsing, end expected\n", STDERR_FILENO);
+			fprintf(stderr, "Error parsing, end expected\n");
 			return 1;
 		}
 		if (k != 0) return 0;
@@ -650,7 +654,7 @@ void checkBG(){
 		for (int i = 0; i < bg_pid_list->len; ++i) {
 			wpid = waitpid(bg_pid_list->array[i],&stat,WNOHANG);
 			if (WIFEXITED(stat)){
-				printf("[%d]\tDone\t\t%s",i + 1 + cant_out,bg_pname_list->array[i]);
+				printf("[%d]\tDone\t\t%s",i + 1 + cant_out,(char*)bg_pname_list->array[i]);
 				removeAtIndex(bg_pid_list,i);
 				removeAtIndexG(bg_pname_list,i);
 				removeAtIndex(bg_grp_list,i);

@@ -54,13 +54,13 @@ int nsh_execute(char** args, int should_wait);
 int bg_group_id;
 
 
-char* builtin_str[];
+char* builtin_str[5];
 
-int (*builtin_func[]) (char**);
+int (*builtin_func[5]) (char**);
 
-char* builtin_str_out[];
+char* builtin_str_out[7];
 
-int (*builtin_func_out[]) (char**);
+int (*builtin_func_out[7]) (char**);
 
 char* nsh_get_home_adr();
 
