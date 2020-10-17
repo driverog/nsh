@@ -216,8 +216,41 @@ int nsh_help(char** args){
  "la ejecución del shell, el comando exit hará que el shell salga del loop antes mencionado y termine.\n"
 		  "");
 		} else if (strcmp(command, "multi-pipe") == 0) {
-			printf("Documentación del multi-pipe\n");
-		} else {
+			printf("Documentación del multi-pipe\n"
+          "El shell permite la concatenación de pipes, para esto escanea la instrucción que se le pasa "
+          "y toma decisiones alrededor de los diferentes pipes\n");
+		} else if(strcmp(command, "background") == 0){
+		    printf("Documentación de background\n"
+             "El shell permite ejecutar procesos en el background mediante el operador &, para esto al crear el nuevo "
+             "proceso, no le hace waitpid, y de esta forma garantiza\n"
+             "que el shell continue su ejecucion normalmente. Además lleva una lista de procesos que se estan ejecutando"
+             "en background para de esta forma poder mandarlos al foreground con el comando fg\n");
+		}else if(strcmp(command, "spaces") == 0){
+            printf("Documentación de spaces\n"
+                   "El shell permite el uso de cualquier cantidad de espacios entre comandos y parámetros, "
+                   "para esto al parsear toma cada palabra como un elemento,\nbuscando símbolos especials como | o >"
+                   "e ignora los espacios\n");
+		}else if(strcmp(command, "history") == 0){
+            printf("Documentación de history\n"
+                   "El shell guarda en un archivo todos los comandos que le mandan a ejecutar, de esta forma al "
+                   "pedirle history es capaz de mostrar los últimos 10\nenumerados debidamente y garantiza persistencia."
+                   " Cuando encuentra el comando again <number> "
+                   "lo reemplaza por el comando que debe ejecutarse\n");
+        }else if(strcmp(command, "ctrl+c") == 0){
+		    printf("Documentación de ctrl+c\n"
+             "Mediante el uso de signals, el shell es capaz de capturar SIGINT y enviarlo al proceso en el foreground"
+             "sin afectar al shell, además,\nlleva un contador para saber cuantas veces el proceso recibió la señal"
+             "y mandarle SIGKILL si la recibe dos veces\n");
+		}else if(strcmp(command, "chain") == 0){
+            printf("Documentación de chain\n");
+        }else if(strcmp(command, "if") == 0){
+            printf("Documentación de if\n");
+        }else if(strcmp(command, "multi-if") == 0){
+            printf("Documentación de multi-if\n");
+        }else if(strcmp(command, "variables") == 0){
+            printf("Documentación de variables\n");
+        }
+		else {
 			printf("Funcionalidad no reconocida, escriba help para acceder a las funcionalidades disponibles\n");
 		}
 	} else {
@@ -230,7 +263,7 @@ int nsh_help(char** args){
    "background:\t comandos en background (0.5 puntos)\n"
    "spaces:\t\t espacios variables entre operadores (0.5 puntos)\n"
    "history:\t historial de comandos usados (0.5 puntos)\n"
-   "ctrl-c:\t\t capturar ctrl+c (0.5 puntos)\n"
+   "ctrl+c:\t\t capturar ctrl+c (0.5 puntos)\n"
    "chain:\t\t operadores para encadenar comandos (0.5 puntos)\n"
    "if:\t\t operador condicional (1 punto)\n"
    "multi-if:\t if anidados (0.5 puntos)\n"
