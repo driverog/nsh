@@ -274,6 +274,10 @@ int nsh_pipe_launch(char** args){
 	}
 }
 
+void controlador(int a) {
+
+}
+
 int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2){
 	pid_t pid, wpid;
 	int status = 1;
@@ -310,16 +314,18 @@ int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2
 		int if_cont = 0;
 		
 		for (int i = 0; args[i] != 0; ++i) {
-			if (if_cont != 0){
-				if (strcmp(args[i],"end") == 0)
-					if_cont--;
-				new_args[j] = args[i];
-				j++;
-			} else if (strcmp(args[i],"if") == 0){
+			if (strcmp(args[i],"if") == 0){
 				new_args[j] = args[i];
 				if (j == 0 || nsh_if_keyword(args[i-1]) || (i > 1 && nsh_if_keyword_2(args[i-2]))) {
 					if_cont++;
 				}
+				j++;
+				continue;
+			}
+			if (if_cont != 0){
+				if (strcmp(args[i],"end") == 0)
+					if_cont--;
+				new_args[j] = args[i];
 				j++;
 			} else if (strcmp(args[i], "<") == 0) {
 				redirectIn(args[i + 1]);
@@ -339,7 +345,7 @@ int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2
 		
 		new_args[j] = NULL;
 		
-//		nsh_print_args(args);
+//		nsh_print_args(new_args);
 		
 		for (int i = 0; i < nsh_num_builtin_out(); ++i) {
 			if (strcmp(new_args[0], builtin_str_out[i]) == 0){
@@ -408,17 +414,18 @@ char** nsh_split_line(char* line){
 				old_token += 1;
 			}
 		}
-		else if (token[strlen(token) - 1] == '\\'){
-			old_token = (char*)malloc(strlen(token) * sizeof(char) + 1);
-			strcpy(old_token,token);
-			do {
-				old_token[strlen(old_token) - 1] = 0;
-				token = strtok(NULL," \t\r\n\a");
-				old_token = realloc(old_token, (strlen(old_token) + strlen(token) + 1) * sizeof(char));
-				old_token = strcat(old_token," ");
-				old_token = strcat(old_token,token);
-			}while(token[strlen(token) - 1] == '\\');
-		}
+//		else if (token[strlen(token) - 2] == '\\'){
+//			old_token = (char*)malloc(strlen(token) * sizeof(char) + 1);
+//			strcpy(old_token,token);
+//			do {
+//				old_token[strlen(old_token) - 1] = 0;
+//				old_token[strlen(old_token) - 2] = 0;
+//				token = strtok(NULL," \t\r\n\a");
+//				old_token = realloc(old_token, (strlen(old_token) + strlen(token) + 1) * sizeof(char));
+//				old_token = strcat(old_token," ");
+//				old_token = strcat(old_token,token);
+//			}while(token[strlen(token) - 1] == '\\');
+//		}
 		
 		
 		
