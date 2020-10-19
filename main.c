@@ -124,40 +124,19 @@ char* nsh_prepare_line(char* line){
 }
 
 void redirectOut(char* fileName){
-	char* endptr = 0;
-	
-	int fd = (int)strtol(fileName,&endptr,10);
-	
-	if (*(endptr+1) != '\0'){
-		fd = open(fileName,O_WRONLY | O_TRUNC | O_CREAT,0600);
-	}
-	
+	int fd = open(fileName,O_WRONLY | O_TRUNC | O_CREAT,0600);
 	dup2(fd,STDOUT_FILENO);
 	close(fd);
 }
 
 void redirectOutAppend(char* fileName){
-	char* endptr = 0;
-	
-	int fd = (int)strtol(fileName,&endptr,10);
-	
-	if (*(endptr+1) != '\0'){
-		fd = open(fileName,O_WRONLY | O_APPEND | O_CREAT,0600);
-	}
-	
+	int fd = open(fileName,O_WRONLY | O_APPEND | O_CREAT,0600);
 	dup2(fd,STDOUT_FILENO);
 	close(fd);
 }
 
 void redirectIn(char* fileName){
-	char* endptr = 0;
-	
-	int fd = (int)strtol(fileName,&endptr,10);
-	
-	if (*(endptr+1) != '\0'){
-		fd = open(fileName,O_RDONLY);
-	}
-	
+	int fd = open(fileName,O_RDONLY);
 	dup2(fd,STDIN_FILENO);
 	close(fd);
 }
@@ -313,7 +292,7 @@ int nsh_launch(char** args,int fd_in, int fd_out, int to_close_1, int to_close_2
 		int j = 0;
 		int if_cont = 0;
 		
-		for (int i = 0; args[i] != 0; ++i) {
+		for (int i = 0; args[i] != NULL; ++i) {
 			if (strcmp(args[i],"if") == 0){
 				new_args[j] = args[i];
 				if (j == 0 || nsh_if_keyword(args[i-1]) || (i > 1 && nsh_if_keyword_2(args[i-2]))) {
@@ -605,7 +584,7 @@ void printPrompt(){
  	}
  	free(home_path);
  	
-	printf("%s%s@%s%s:%s%s%s$ ", BOLD_RED, getlogin(), hostname, WHITE, BOLD_CYAN, buf, WHITE);
+	printf("%s%s@%s%s:%s%s%s\n$ ", BOLD_RED, getlogin(), hostname, WHITE, BOLD_CYAN, buf, WHITE);
 	free(to_free);
 }
 

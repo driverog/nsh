@@ -97,6 +97,7 @@ int nsh_foreground(char** args){
 }
 
 int nsh_exit(char** args){
+	printf("exit\n");
 	exit(EXIT_SUCCESS);
 }
 
@@ -232,7 +233,7 @@ int nsh_help(char** args){
  "y se continua hasta que acaba la linea, el ultimo proceso solo tiene su entrada redirigida desde el ultimo pipe creado. Vale aclarar "
  "que cualquier redirección explicita entre los comandos entre pipes será la ultima redirección que se haga. Mientras estos comandos "
  "se van ejecutando, el shell no hace wait hasta no terminar la linea, cada uno de los pid son añadidos a un lista, para esperar por ellos "
- "al terminar de leer todos los argumentos, de esta manera estos procesos se estarán ejecutando al mismo tiempo.");
+ "al terminar de leer todos los argumentos, de esta manera estos procesos se estarán ejecutando al mismo tiempo.\n");
 		} else if(strcmp(command, "background") == 0){
 		    printf("Documentación de background\n"
 			 "El shell permite ejecutar procesos en el background mediante el operador &, una vez tokenizada la entrada, si alguna linea "
@@ -359,7 +360,7 @@ int nsh_help(char** args){
    BOLD_GREEN"if"WHITE":\t\t operador condicional ("BOLD_CYAN"1"WHITE" punto)\n"
    BOLD_GREEN"multi-if"WHITE":\t if anidados ("BOLD_CYAN"0.5"WHITE" puntos)\n"
    BOLD_GREEN"help"WHITE":\t\t comando de ayuda ("BOLD_CYAN"1"WHITE" punto)\n"
-   BOLD_GREEN"svariables"WHITE":\t almacenar e imprimir variables ("BOLD_CYAN"1"WHITE" punto)\n"
+   BOLD_GREEN"variables"WHITE":\t almacenar e imprimir variables ("BOLD_CYAN"1"WHITE" punto)\n"
    "\n"
    "Total:\t "BOLD_CYAN"10"WHITE" puntos\n");
 	}
